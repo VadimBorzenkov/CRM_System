@@ -1,0 +1,57 @@
+{% extends 'crm/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Список клиентов</h2>
+    <div class="row mt-3">
+        <div class="col-md-12">
+            <form method="POST" action="{% url 'customers:search_result' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <input type="text" name="name" class="form-control" placeholder="Поиск...">
+                </div>
+                <button type="submit" class="btn btn-primary">Искать</button>
+            </form>
+
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">Форма организации</th>
+                            <th scope="col">Название</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Телефон</th>
+                            <th scope="col">Адрес</th>
+                            <th scope="col">Отрасль</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for customer in customers %}
+                        <tr>
+                            <td>{{ customer.organization }}</td>
+                            <td>{{ customer.name }}</td>
+                            <td>{{ customer.email }}</td>
+                            <td>{{ customer.phone }}</td>
+                            <td>{{ customer.address }}</td>
+                            <td>{{ customer.industry }}</td>
+                            <td>
+                                <a href="{% url 'customers:edit_customer' customer.pk %}"
+                                    class="btn btn-primary btn-sm">Изменить</a>
+                            </td>
+                            <td>
+                                <a href="{% url 'customers:delete_customer' customer.pk %}"
+                                    class="btn btn-primary btn-sm">Удалить</a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5">Нет доступных клиентов</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

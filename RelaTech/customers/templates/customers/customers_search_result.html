@@ -1,0 +1,53 @@
+{% extends 'crm/base.html' %}
+
+{% block content %}
+<style>
+    .content-container {
+        margin-top: 100px;
+        /* Добавьте отступ сверху для избежания заслонения навигацией */
+    }
+</style>
+<div class="content-container">
+    <div class="container mt-5">
+        <form method="POST" action="{% url 'customers:customers_search' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <input type="text" name="name" class="form-control" placeholder="Поиск...">
+            </div>
+            <button type="submit" class="btn btn-primary">Искать</button>
+        </form>
+
+        {% if results %}
+        <h2>Результаты поиска</h2>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">Форма организации</th>
+                        <th scope="col">Название</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Телефон</th>
+                        <th scope="col">Адрес</th>
+                        <th scope="col">Отрасль</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for result in results %}
+                    <tr>
+                        <td>{{ result.organization }}</td>
+                        <td>{{ result.name }}</td>
+                        <td>{{ result.email }}</td>
+                        <td>{{ result.phone }}</td>
+                        <td>{{ result.address }}</td>
+                        <td>{{ result.industry }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p>Ничего не найдено</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
