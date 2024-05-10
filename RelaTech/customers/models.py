@@ -9,6 +9,8 @@ class Customer(models.Model):
         ('ИП', 'ИП'),
         ('Физическое лицо', 'Физическое лицо'),
     ]
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='customers')
     organization = models.CharField(
         max_length=20, verbose_name='Организация', choices=ORGANIZATION_CHOICES, default='Физическое лицо')
     name = models.CharField(max_length=100, verbose_name='Название')
@@ -18,7 +20,6 @@ class Customer(models.Model):
     address = models.TextField(verbose_name='Адрес', blank=True, null=True)
     industry = models.CharField(
         max_length=100, verbose_name='Отрасль', blank=True, null=True)
-
     created_at = models.DateTimeField(
         auto_now_add=True, verbose_name='Дата создания')
     updated_at = models.DateTimeField(

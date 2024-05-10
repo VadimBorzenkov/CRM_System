@@ -1,27 +1,136 @@
-{% extends 'crm/base.html' %}
+{% extends 'deals/base.html' %}
+
+{% block navigation %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="{% url 'index'%}">Главная</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
+            aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ml-auto">
+
+
+                {% if user.is_authenticated%}
+                {% if user_type == 'admin' %}
+                <!-- Блок для администратора -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownCustomers" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        Клиенты
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownCustomers">
+                        <li>
+                            <a class="dropdown-item" href="{% url 'customers:customers' %}">Все клиенты</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'customers:add_customer' %}">Добавить
+                                клиента</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownDeals" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        Сделки
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownDeals">
+                        <li>
+                            <a class="dropdown-item" href="{% url 'deals:deals' %}">Все сделки</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'deals:add_deal' %}">Добавить сделку</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'deals:add_product' %}">Добавить продукт</a>
+                        </li>
+                    </ul>
+                </li>
+                {% elif user_type == 'user' %}
+                <!-- Блок для клиента -->
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'customers:add_customer' %}">Стать клиентом</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'deals:add_deal' %}">Создать сделку</a>
+                </li>
+                {% elif user_type == 'company' %}
+                <!-- Блок для фирмы -->
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'customers:add_customer' %}">Добавить клиента</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'deals:add_deal' %}">Добавить сделку</a>
+                </li>
+                {% endif %}
+
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user-circle"></i>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li>
+                            <a class="dropdown-item" href="{% url 'users:profile' user.pk%}">Профиль</a>
+                        </li>
+
+                        {% if user.is_superuser or user.is_staff %}
+                        <li><a class="dropdown-item" href="{% url 'index'%}">
+                                Админ-панель
+                            </a></li>
+                        <li>
+                            {% endif %}
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="#"
+                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Выйти</a>
+                            <form id="logout-form" action="{% url 'users:logout' %}" method="post"
+                                style="display: none;">
+                                {% csrf_token %}
+                            </form>
+                        </li>
+                    </ul>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'users:login'%}">Войти <i class="fas fa-sign-in-alt"></i></a>
+                </li>
+                {% endif %}
+
+            </ul>
+        </div>
+    </div>
+</nav>
+{% endblock %}
+
 
 {% block content %}
 <div class="container mt-5">
-    <h2>Список клиентов</h2>
+    <h2>Список сделок</h2>
     <div class="row mt-3">
         <div class="col-md-12">
-            <!-- <form method="POST" action="{% url 'customers:search_result' %}">
+            <form method="POST" action="{% url 'deals:deals_search_result' %}">
                 {% csrf_token %}
                 <div class="form-group">
-                    <input type="text" name="name" class="form-control" placeholder="Поиск...">
+                    <input type="text" name="customer" class="form-control" placeholder="Поиск...">
                 </div>
                 <button type="submit" class="btn btn-primary">Искать</button>
-            </form> -->
+            </form>
 
             <div class="table-responsive">
                 <table class="table table-striped">
                     <thead>
                         <tr>
                             <th scope="col">Продукт</th>
-                            <th scope="col">Уоличество</th>
+                            <th scope="col">Количество</th>
                             <th scope="col">Цена за единицу</th>
                             <th scope="col">Общая сумма</th>
                             <th scope="col">Дата сделки</th>>
+                            <th scope="col">Клиент</th>>
+
                         </tr>
                     </thead>
                     <tbody>
@@ -32,6 +141,8 @@
                             <td>{{ deal.unit_price }}</td>
                             <td>{{ deal.total_amount }}</td>
                             <td>{{ deal.deal_date }}</td>
+                            <td>{{ deal.customer }}</td>
+
                             <td>
                                 <a href="{% url 'deals:edit_deal' deal.pk %}"
                                     class="btn btn-primary btn-sm">Изменить</a>

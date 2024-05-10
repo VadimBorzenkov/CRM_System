@@ -21,9 +21,12 @@ class AddDealForm(forms.ModelForm):
 
 
 class AddProductForm(forms.ModelForm):
+    description = forms.CharField(
+        label='Описание', widget=forms.Textarea, required=False)
+
     class Meta:
         model = Product
-        fields = ['name']
+        fields = ['name', 'description']
 
 
 class EditDealForm(forms.ModelForm):
@@ -44,3 +47,12 @@ class EditDealForm(forms.ModelForm):
         }
 
         exclude = ['deal_date']
+
+
+class SearchForm(forms.Form):
+    name = forms.CharField(
+        label='Поиск по клиенту',
+        max_length=100,
+        widget=forms.TextInput(
+            attrs={'class': 'form-control', 'placeholder': 'Введите клиента'})
+    )

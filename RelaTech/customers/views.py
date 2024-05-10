@@ -15,12 +15,23 @@ from customers.models import Customer
 
 def customerView(request):
     customers = Customer.objects.all()
-    return render(request, 'customers/customers.html', {'customers': customers})
+
+    if request.user.is_authenticated:
+        # Если пользователь аутентифицирован, получаем его тип
+        user_type = request.user.user_type
+    else:
+        # Если пользователь не аутентифицирован, устанавливаем тип по умолчанию
+        user_type = None
+
+    # Добавляем тип пользователя в контекст
+    context = {'customers': customers, 'user_type': user_type}
+
+    return render(request, 'customers/customers.html', context)
 
 
 class AddCustomerView(LoginRequiredMixin, View):
     template_name = 'customers/add_customer.html'
-    success_url = 'customers:customers'
+    success_url = 'index'
 
     def get(self, request):
         form = AddCustomerForm()
@@ -29,10 +40,14 @@ class AddCustomerView(LoginRequiredMixin, View):
     def post(self, request):
         form = AddCustomerForm(request.POST)
         if form.is_valid():
-            # Создание нового клиента с пользователем из сессии
+            # Получение текущего пользователя из сессии
+            current_user = request.user
+
+            # Создание экземпляра клиента, связанного с текущим пользователем
             customer = form.save(commit=False)
-            customer.user = request.user
+            customer.user = current_user
             customer.save()
+
             return redirect(self.success_url)
         return render(request, self.template_name, {'form': form})
 

@@ -18,8 +18,8 @@ class Deal(models.Model):
         ('2', 'В обработке'),
         ('3', 'Завершена'),
     ]
-    user = models.ForeignKey(
-        User, on_delete=models.CASCADE, default=None)
+    customer = models.ForeignKey(
+        User, on_delete=models.CASCADE)
     product = models.ForeignKey(
         Product, on_delete=models.CASCADE, verbose_name='Продукт')
     quantity = models.PositiveIntegerField(verbose_name='Количество')

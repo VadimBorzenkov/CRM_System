@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
-from crm.views import IndexView
+from deals.views import IndexView
 
 urlpatterns = [
     path('admin/', admin.site.urls),

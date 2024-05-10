@@ -116,10 +116,10 @@
 </style>
 <div class="content-container">
     <div class="container mt-5">
-        <form method="POST" action="{% url 'customers:customers_search' %}">
+        <form method="POST" action="{% url 'deals:deals_search_result' %}">
             {% csrf_token %}
             <div class="form-group">
-                <input type="text" name="name" class="form-control" placeholder="Поиск...">
+                <input type="text" name="customer" class="form-control" placeholder="Поиск...">
             </div>
             <button type="submit" class="btn btn-primary">Искать</button>
         </form>
@@ -128,29 +128,36 @@
         <h2>Результаты поиска</h2>
         <div class="table-responsive">
             <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th scope="col">Форма организации</th>
-                        <th scope="col">Название</th>
-                        <th scope="col">Email</th>
-                        <th scope="col">Телефон</th>
-                        <th scope="col">Адрес</th>
-                        <th scope="col">Отрасль</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for result in results %}
-                    <tr>
-                        <td>{{ result.organization }}</td>
-                        <td>{{ result.name }}</td>
-                        <td>{{ result.email }}</td>
-                        <td>{{ result.phone }}</td>
-                        <td>{{ result.address }}</td>
-                        <td>{{ result.industry }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">Продукт</th>
+                            <th scope="col">Количество</th>
+                            <th scope="col">Цена за единицу</th>
+                            <th scope="col">Общая сумма</th>
+                            <th scope="col">Дата сделки</th>
+                            <th scope="col">Клиент</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if results %}
+                        {% for result in results %}
+                        <tr>
+                            <td>{{ result.product }}</td>
+                            <td>{{ result.quantity }}</td>
+                            <td>{{ result.unit_price }}</td>
+                            <td>{{ result.total_amount }}</td>
+                            <td>{{ result.deal_date }}</td>
+                            <td>{{ result.customer }}</td>
+                        </tr>
+                        {% endfor %}
+                        {% else %}
+                        <tr>
+                            <td colspan="6">Нет доступных сделок</td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
         </div>
         {% else %}
         <p>Ничего не найдено</p>
