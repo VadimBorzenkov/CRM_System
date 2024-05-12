@@ -6,7 +6,8 @@ from django.urls import reverse_lazy
 from django.views.generic.base import TemplateView
 
 from deals.models import Deal, Product
-from deals.forms import AddDealForm, AddProductForm, EditDealForm, SearchForm
+from customers.models import Customer
+from deals.forms import AddDealForm, EditDealForm, SearchForm
 
 
 class IndexView(TemplateView):
@@ -39,9 +40,12 @@ def dealView(request):
     return render(request, 'deals/deals.html', context)
 
 
-# def productView(request):
-#     products = Product.objects.all()
-#     return render(request, 'deals/products.html', {'products': products})
+class UpdateDealStatusView(View):
+    def post(self, request, pk):
+        new_status = request.POST.get('new_status')
+        deal = Deal.objects.get(id=pk)
+        deal.update_status(new_status)
+        return redirect('deals:deals')
 
 
 class AddDealView(LoginRequiredMixin, View):
@@ -49,42 +53,31 @@ class AddDealView(LoginRequiredMixin, View):
     success_url = 'deals:deals'
 
     def get(self, request):
-        form = AddDealForm()
+        form = AddDealForm(user=request.user)
         return render(request, self.template_name, {'form': form})
 
     def post(self, request):
-        form = AddDealForm(request.POST)
+        form = AddDealForm(request.POST, user=request.user)
         if form.is_valid():
-            # Получение текущего клиента из сессии
-            # получаем первого клиента пользователя
-            customer = request.user
-
-            if customer:
-                # Создание новой сделки с указанием текущего клиента
-                deal = form.save(commit=False)
-                deal.customer = customer  # изменение на customer
-                deal.save()
-
-                return redirect(self.success_url)
-            else:
-                # Обработка ситуации, если пользователь не связан с клиентом
+            deal = form.save(commit=False)
+            client = form.cleaned_data.get('client')
+            if client:
+                deal.customer = client
+            elif request.user.user_type == 'customer':
+                customer = request.user.customers.first()
+                if customer:
+                    deal.customer = customer
+                else:
+                    # Создаем клиента для текущего пользователя, если его нет
+                    deal.customer = Customer.objects.create(
+                        user=request.user, name=request.user.username, email=request.user.email)
+            elif request.user.user_type == 'company':
+                # Обработка для компаний
                 pass
-
-        return render(request, self.template_name, {'form': form})
-
-
-class AddPoductView(View):
-    template_name = 'deals/add_product.html'
-    success_url = 'deals:deals'
-
-    def get(self, request):
-        form = AddProductForm()
-        return render(request, self.template_name, {'form': form})
-
-    def post(self, request):
-        form = AddProductForm(request.POST)
-        if form.is_valid():
-            form.save()
+            else:
+                # Обработка для других типов пользователей
+                pass
+            deal.save()
             return redirect(self.success_url)
         return render(request, self.template_name, {'form': form})
 

@@ -32,18 +32,24 @@
                             {% endfor %}
                         </div>
                         {% endif %}
+
                         <div class="form-group">
                             <label class="small mb-1" for="id_product">Продукт</label>
                             {{ form.product }}
                         </div>
+
                         <div class="form-group">
                             <label class="small mb-1" for="id_quantity">Количество</label>
                             {{ form.quantity }}
                         </div>
+
+                        {% if request.user.user_type == 'company' %}
                         <div class="form-group">
-                            <label class="small mb-1" for="id_unit_price">Цена за единицу</label>
-                            {{ form.unit_price }}
+                            <label class="small mb-1" for="id_client">Клиент</label>
+                            {{ form.client }}
                         </div>
+                        {% endif %}
+
                         <div class="form-group d-flex align-items-center justify-content-between mt-4 mb-0">
                             <button class="btn btn-primary" type="submit">Добавить сделку</button>
                         </div>

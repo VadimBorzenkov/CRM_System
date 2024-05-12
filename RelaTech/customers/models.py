@@ -1,6 +1,7 @@
 from django.db import models
 
 from users.models import User
+from companies.models import Company
 
 
 class Customer(models.Model):
@@ -10,7 +11,9 @@ class Customer(models.Model):
         ('Физическое лицо', 'Физическое лицо'),
     ]
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='customers')
+        User, on_delete=models.CASCADE, related_name='customers', default=None, null=True)
+    company = models.ForeignKey(
+        Company, on_delete=models.CASCADE, related_name='customers', default=None, null=True)
     organization = models.CharField(
         max_length=20, verbose_name='Организация', choices=ORGANIZATION_CHOICES, default='Физическое лицо')
     name = models.CharField(max_length=100, verbose_name='Название')

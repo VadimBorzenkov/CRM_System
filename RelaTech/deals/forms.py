@@ -1,43 +1,33 @@
 from django import forms
 
 from deals.models import Deal, Product
+from customers.models import Customer
 
 
 class AddDealForm(forms.ModelForm):
+    client = forms.ModelChoiceField(
+        queryset=Customer.objects.all(), required=False)
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+        if user and user.is_authenticated and user.user_type == 'company':
+            # Показываем всех пользователей
+            self.fields['client'].queryset = Customer.objects.all()
+
     class Meta:
         model = Deal
-        fields = ['product', 'quantity', 'unit_price']
-        labels = {
-            'product': 'Продукт',
-            'quantity': 'Количество',
-            'unit_price': 'Цена за единицу',
-        }
-        widgets = {
-            # Используем виджет Select для выбора продукта из списка
-            'product': forms.Select(attrs={'class': 'form-control'}),
-            'quantity': forms.NumberInput(attrs={'class': 'form-control'}),
-            'unit_price': forms.NumberInput(attrs={'class': 'form-control'}),
-        }
-
-
-class AddProductForm(forms.ModelForm):
-    description = forms.CharField(
-        label='Описание', widget=forms.Textarea, required=False)
-
-    class Meta:
-        model = Product
-        fields = ['name', 'description']
+        fields = ['product', 'quantity', 'client']
 
 
 class EditDealForm(forms.ModelForm):
     class Meta:
         model = Deal
-        fields = ['product', 'quantity', 'unit_price',
+        fields = ['product', 'quantity',
                   'total_amount', 'deal_date', 'status']
         labels = {
             'product': 'Продукт',
             'quantity': 'Количество',
-            'unit_price': 'Цена за единицу',
             'total_amount': 'Общая сумма',
             'deal_date': 'Дата сделки',
             'status': 'Статус',

@@ -43,7 +43,7 @@
                             <a class="dropdown-item" href="{% url 'deals:add_deal' %}">Добавить сделку</a>
                         </li>
                         <li>
-                            <a class="dropdown-item" href="{% url 'deals:add_product' %}">Добавить продукт</a>
+                            <a class="dropdown-item" href="{% url 'companies:add_product' %}">Добавить продукт</a>
                         </li>
                     </ul>
                 </li>
@@ -130,6 +130,7 @@
                             <th scope="col">Общая сумма</th>
                             <th scope="col">Дата сделки</th>>
                             <th scope="col">Клиент</th>>
+                            <th scope="col">Статус</th>>
 
                         </tr>
                     </thead>
@@ -138,18 +139,31 @@
                         <tr>
                             <td>{{ deal.product }}</td>
                             <td>{{ deal.quantity }}</td>
-                            <td>{{ deal.unit_price }}</td>
+                            <td>{{ deal.product.price }}</td>
                             <td>{{ deal.total_amount }}</td>
                             <td>{{ deal.deal_date }}</td>
                             <td>{{ deal.customer }}</td>
+                            <td>{{ deal.get_status_display }}</td>
 
                             <td>
                                 <a href="{% url 'deals:edit_deal' deal.pk %}"
                                     class="btn btn-primary btn-sm">Изменить</a>
                             </td>
                             <td>
+
                                 <a href="{% url 'deals:delete_deal' deal.pk %}"
                                     class="btn btn-primary btn-sm">Удалить</a>
+                            </td>
+                            <td>
+                                <form action="{% url 'deals:update_deal_status' pk=deal.pk %}" method="post">
+                                    {% csrf_token %}
+                                    <select name="new_status">
+                                        <option value="1">Создана</option>
+                                        <option value="2">В обработке</option>
+                                        <option value="3">Завершена</option>
+                                    </select>
+                                    <button type="submit" class="btn btn-primary">Изменить статус</button>
+                                </form>
                             </td>
                         </tr>
                         {% empty %}

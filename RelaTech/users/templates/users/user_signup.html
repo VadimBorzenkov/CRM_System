@@ -19,7 +19,6 @@
                     </div>
                     <div class="card-body">
 
-
                         {% if form.errors %}
                         <div class="alert alert-danger">
                             <strong>Ошибка:</strong> Пожалуйста, проверьте введенные данные.
@@ -32,7 +31,8 @@
                             </ul>
                         </div>
                         {% endif %}
-                        <form action="{% url 'users:registration' %}" method="post">
+                        <form action="{% url 'users:user_registration' %}" method="post">
+
                             {% csrf_token %}
                             <div class="form-row">
                                 <div class="col-md-6">
@@ -84,8 +84,8 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label class="small mb-1" for="{{ form.age.id_for_label }}">Возраст</label>
-                                        {{ form.age }}
+                                        <label class="small mb-1" for="id_organization">Организация</label>
+                                        {{ form.organization }}
                                     </div>
                                 </div>
                             </div>

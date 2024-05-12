@@ -79,16 +79,38 @@
             </div>
             {% elif user.user_type == 'company' %}
             <div class="mt-4">
+                <h4>Продукты вашей компании</h4>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Название продукта</th>
+                            <th>Описание</th>
+                            <th>Цена</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in company_products %}
+                        <tr>
+                            <td>{{ product.name }}</td>
+                            <td>{{ product.description }}</td>
+                            <td>{{ product.price }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-4">
                 <h4>Сделки</h4>
                 <table class="table">
                     <thead>
                         <tr>
                             <th>Название продукта</th>
                             <th>Количество</th>
-                            <th>Цена за единицу</th>
                             <th>Общая сумма</th>
                             <th>Дата сделки</th>
                             <th>Клиент</th>
+                            <th>Статус</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -97,10 +119,10 @@
                         <tr>
                             <td>{{ deal.product }}</td>
                             <td>{{ deal.quantity }}</td>
-                            <td>{{ deal.unit_price }}</td>
                             <td>{{ deal.total_amount }}</td>
                             <td>{{ deal.deal_date }}</td>
                             <td>{{ deal.customer }}</td>
+                            <td>{{ deal.get_status_display }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -141,9 +163,9 @@
                         <tr>
                             <th>Название продукта</th>
                             <th>Количество</th>
-                            <th>Цена за единицу</th>
                             <th>Общая сумма</th>
                             <th>Дата сделки</th>
+                            <th>Статус</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -151,9 +173,9 @@
                         <tr>
                             <td>{{ deal.product }}</td>
                             <td>{{ deal.quantity }}</td>
-                            <td>{{ deal.unit_price }}</td>
                             <td>{{ deal.total_amount }}</td>
                             <td>{{ deal.deal_date }}</td>
+                            <td>{{ deal.get_status_display }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
