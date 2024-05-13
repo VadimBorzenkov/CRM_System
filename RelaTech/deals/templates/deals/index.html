@@ -124,6 +124,9 @@
 {% endblock %}
 
 {% block content%}
+
+
+
 <section>
     <!--    <div class="alert alert-light text-center" role="alert">-->
     <!--        Информационное сообщение-->
@@ -135,11 +138,19 @@
                 <p>
                     CRM система
                 </p>
+                {% if user.is_authenticated %}
                 <button id="start-purchase-btn" type="button" class="btn btn-lg">
-                    <a id="start-purchase-link" href="{% url 'customers:customers'%}">
-                        Клиенты
+                    <a id="start-purchase-link" href="{% url 'users:profile' user.pk%}">
+                        Мой профиль
                     </a>
                 </button>
+                {% else %}
+                <button id="start-purchase-btn" type="button" class="btn btn-lg">
+                    <a id="start-purchase-link" href="{% url 'users:login' %}">
+                        Начать пользоваться
+                    </a>
+                </button>
+                {% endif %}
             </div>
         </div>
     </div>

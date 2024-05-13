@@ -12,7 +12,7 @@ class Deal(models.Model):
         ('3', 'Завершена'),
     ]
     customer = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='deals')
+        Customer, on_delete=models.CASCADE, related_name='deals')
     company = models.ForeignKey(
         Company, on_delete=models.CASCADE, related_name='deals', default=None, null=True)
     product = models.ForeignKey(

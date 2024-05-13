@@ -15,4 +15,3 @@ class User(AbstractUser):
     photo = models.ImageField(upload_to='users_photos', blank=True, null=True)
     age = models.PositiveIntegerField(blank=True, null=True)
     phone_number = models.CharField(max_length=15, blank=True, null=True)
-

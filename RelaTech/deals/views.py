@@ -7,6 +7,7 @@ from django.views.generic.base import TemplateView
 
 from deals.models import Deal, Product
 from customers.models import Customer
+from users.models import User
 from deals.forms import AddDealForm, EditDealForm, SearchForm
 
 
@@ -61,22 +62,31 @@ class AddDealView(LoginRequiredMixin, View):
         if form.is_valid():
             deal = form.save(commit=False)
             client = form.cleaned_data.get('client')
+            product = form.cleaned_data.get('product')
+
+            # Установка компании из выбранного продукта
+            if product:
+                deal.company = product.company
+
+            # Установка клиента из формы или из сессии
             if client:
                 deal.customer = client
-            elif request.user.user_type == 'customer':
-                customer = request.user.customers.first()
-                if customer:
-                    deal.customer = customer
-                else:
-                    # Создаем клиента для текущего пользователя, если его нет
-                    deal.customer = Customer.objects.create(
-                        user=request.user, name=request.user.username, email=request.user.email)
             elif request.user.user_type == 'company':
                 # Обработка для компаний
                 pass
             else:
-                # Обработка для других типов пользователей
-                pass
+                # Если пользователь - обычный пользователь,
+                # попробуем получить клиента из сессии
+                customer = request.user.customers.first()
+                if customer:
+                    # Используем поле user у объекта Customer,
+                    # чтобы присвоить его к атрибуту customer объекта Deal
+                    deal.customer = customer.user
+                else:
+                    # Создаем клиента для текущего пользователя, если его нет
+                    user = get_object_or_404(User, pk=request.user.pk)
+                    deal.customer = user
+
             deal.save()
             return redirect(self.success_url)
         return render(request, self.template_name, {'form': form})

@@ -6,6 +6,7 @@ from django.urls import reverse, reverse_lazy
 from django.contrib.messages.views import SuccessMessageMixin
 from django.views.generic.edit import CreateView, UpdateView
 from django.contrib.auth import get_user_model
+from django.shortcuts import get_object_or_404
 
 
 from common.views import TitleMixin
@@ -65,12 +66,33 @@ class UserProfileView(TitleMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.get_object()
-        user_deals = Deal.objects.filter(customer=user)
-        user_customers = Customer.objects.filter(user=user)
-        user_company = user.company if hasattr(user, 'company') else None
-        if user_company:
+        user_deals = None
+        user_customers = None
+        user_company = None
+        company_products = None  # Добавляем переменную для продуктов компании
+
+        # Проверяем, является ли пользователь компанией
+        if user.user_type == 'company':
+            # Если пользователь - компания, получаем ее компанию
+            user_company = get_object_or_404(Company, user=user)
+
+            # Фильтруем сделки по компании
+            user_deals = Deal.objects.filter(company=user_company)
+
+            # Получаем всех клиентов компании
+            user_customers = Customer.objects.filter(company=user_company)
+
+            # Получаем продукты компании
             company_products = Product.objects.filter(company=user_company)
-            context['company_products'] = company_products
+
+        else:
+            # Если пользователь не компания, получаем его сделки и клиентов
+            user_deals = Deal.objects.filter(customer__user=user)
+            user_customers = Customer.objects.filter(user=user)
+
         context['user_deals'] = user_deals
         context['user_customers'] = user_customers
+        context['user_company'] = user_company
+        # Добавляем продукты компании в контекст
+        context['company_products'] = company_products
         return context

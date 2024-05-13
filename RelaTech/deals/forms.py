@@ -11,9 +11,17 @@ class AddDealForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
-        if user and user.is_authenticated and user.user_type == 'company':
-            # Показываем всех пользователей
-            self.fields['client'].queryset = Customer.objects.all()
+        if user and user.is_authenticated:
+            if user.user_type == 'company':
+                # Показываем всех пользователей для компании
+                self.fields['client'].queryset = Customer.objects.all()
+                # Ограничиваем выбор продуктов только для текущей компании
+                self.fields['product'].queryset = Product.objects.filter(
+                    company=user.company)
+            elif user.user_type == 'admin':
+                # Показываем всех клиентов и все продукты для админа
+                self.fields['client'].queryset = Customer.objects.all()
+                self.fields['product'].queryset = Product.objects.all()
 
     class Meta:
         model = Deal

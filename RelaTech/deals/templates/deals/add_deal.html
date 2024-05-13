@@ -43,7 +43,7 @@
                             {{ form.quantity }}
                         </div>
 
-                        {% if request.user.user_type == 'company' %}
+                        {% if request.user.user_type == 'company' or request.user.user_type == 'admin' %}
                         <div class="form-group">
                             <label class="small mb-1" for="id_client">Клиент</label>
                             {{ form.client }}
