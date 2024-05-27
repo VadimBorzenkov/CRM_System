@@ -68,24 +68,25 @@ class AddDealView(LoginRequiredMixin, View):
             if product:
                 deal.company = product.company
 
-            # Установка клиента из формы или из сессии
-            if client:
-                deal.customer = client
-            elif request.user.user_type == 'company':
-                # Обработка для компаний
-                pass
-            else:
-                # Если пользователь - обычный пользователь,
-                # попробуем получить клиента из сессии
-                customer = request.user.customers.first()
-                if customer:
-                    # Используем поле user у объекта Customer,
-                    # чтобы присвоить его к атрибуту customer объекта Deal
-                    deal.customer = customer.user
+            if request.user.user_type == 'user':
+                # Если пользователь обычный, он сам становится клиентом
+                customer, created = Customer.objects.get_or_create(
+                    user=request.user,
+                    defaults={
+                        'name': request.user.get_full_name(),
+                        'email': request.user.email,
+                        'phone': request.user.phone_number,
+                        # Дополнительные поля, если необходимо
+                    }
+                )
+                deal.customer = customer
+            elif request.user.user_type in ['company', 'admin']:
+                # Обработка для компаний и администраторов
+                if client:
+                    deal.customer = client
                 else:
-                    # Создаем клиента для текущего пользователя, если его нет
-                    user = get_object_or_404(User, pk=request.user.pk)
-                    deal.customer = user
+                    # Обработка случая, когда клиент не выбран
+                    return render(request, self.template_name, {'form': form, 'error': 'Please select a client'})
 
             deal.save()
             return redirect(self.success_url)

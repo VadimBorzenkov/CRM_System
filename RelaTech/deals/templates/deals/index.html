@@ -30,17 +30,11 @@
                         <li>
                             <a class="dropdown-item" href="{% url 'customers:customers' %}">Все клиенты</a>
                         </li>
-                        <li>
-                            <a class="dropdown-item" href="{% url 'customers:add_customer' %}">Добавить
-                                клиента</a>
-                        </li>
+
                         <li>
                             <a class="dropdown-item" href="{% url 'companies:companies' %}">Все компании</a>
                         </li>
-                        <li>
-                            <a class="dropdown-item" href="{% url 'companies:add_company' %}">Добавить
-                                компанию</a>
-                        </li>
+
                     </ul>
                 </li>
                 <li class="nav-item dropdown">
@@ -66,17 +60,17 @@
                 </li>
                 {% elif user_type == 'user' %}
                 <!-- Блок для клиента -->
-                <li class="nav-item">
+                <!-- <li class="nav-item">
                     <a class="nav-link" href="{% url 'customers:add_customer' %}">Стать клиентом</a>
-                </li>
+                </li> -->
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'deals:add_deal' %}">Создать сделку</a>
                 </li>
                 {% elif user_type == 'company' %}
                 <!-- Блок для фирмы -->
-                <li class="nav-item">
+                <!-- <li class="nav-item">
                     <a class="nav-link" href="{% url 'customers:add_customer' %}">Добавить клиента</a>
-                </li>
+                </li> -->
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'deals:add_deal' %}">Добавить сделку</a>
                 </li>

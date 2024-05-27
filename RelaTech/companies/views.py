@@ -97,7 +97,7 @@ class EditCompanyView(UpdateView):
     success_url = reverse_lazy('companies:companies')
 
     def get_object(self, queryset=None):
-        return get_object_or_404(Product, pk=self.kwargs['pk'])
+        return get_object_or_404(Company, pk=self.kwargs['pk'])
 
 
 def delete_company(request, pk):
